@@ -56,10 +56,9 @@ const (
 var db *sql.DB              // global for database access from all endpoints
    
 //CreateDriver == CreateTruckDriver 
-//@TODO in the real world, there'd be a many to many mapping between drivers and trucks
-//Adds a new driver to the system.  We will assume all drivers have one truck and each driver has 
+//Adds a new driver to the system.  For now, assume all drivers have one truck and each driver has 
 //a maximum capacity (weight). Each shipment also has a required capacity and if a shipment's capacity 
-//exceeds a truck's maximum capacity, then we should not offer the job to that driver.
+//exceeds a truck's maximum capacity, then that shipment will not be offered to the driver.
 //**Inputs**
 //* _capacity_: The capacity the driver's truck can carry.
 //
@@ -275,8 +274,7 @@ func AcceptOrRejectOffer(w http.ResponseWriter, req *http.Request) {
     fmt.Printf("AcceptOrRejectOffer, action = %s\n", action)
 
     //I'm assuming that only offerid's with offer.status == OfferActive and 
-    //associated shipment.status == ShipOffersReady will be used as input, but
-    //this may be an incorrect assumption
+    //associated shipment.status == ShipOffersReady will be used as input
 
     switch action {
 
@@ -379,10 +377,10 @@ func checkErr(err error) {
 
 func main() {
 
-    os.Remove("./convoyapi.db")
+    os.Remove("./truckapi.db")
 
     var err error
-    db, err = sql.Open("sqlite3", "./convoyapi.db")
+    db, err = sql.Open("sqlite3", "./truckapi.db")
     if err != nil {
         log.Fatal(err)
     }
